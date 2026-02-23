@@ -142,7 +142,7 @@ const AIChatPanel = ({ city, zones, mode = "admin" }: AIChatPanelProps) => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[90vw]">
-      <div className="glass-card flex flex-col h-[500px] shadow-2xl border border-border">
+      <div className="flex flex-col h-[500px] shadow-2xl border border-border rounded-xl bg-background/60 backdrop-blur-xl">
         {/* Header with close */}
         <div className="p-3 border-b border-border/50 flex items-center gap-2">
           <Bot className="w-4 h-4 text-primary" />
