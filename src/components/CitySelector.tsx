@@ -13,7 +13,13 @@ interface CitySelectorProps {
 const CitySelector = ({ selectedCity, onSelectCity }: CitySelectorProps) => {
   const [selectedState, setSelectedState] = useState<string>("All");
 
-  const filtered = selectedState === "All" ? cities : cities.filter(c => c.state === selectedState);
+  // Prioritize Bellary at the top
+  const baseFiltered = selectedState === "All" ? cities : cities.filter(c => c.state === selectedState);
+  const filtered = [...baseFiltered].sort((a, b) => {
+    if (a.id === "bly") return -1;
+    if (b.id === "bly") return 1;
+    return 0;
+  });
   const level = getAqiLevel(selectedCity.aqi);
 
   return (
@@ -50,7 +56,7 @@ const CitySelector = ({ selectedCity, onSelectCity }: CitySelectorProps) => {
         ))}
       </div>
 
-      {/* City select using Radix */}
+      {/* City select */}
       <Select
         value={selectedCity.id}
         onValueChange={(val) => {
@@ -63,7 +69,6 @@ const CitySelector = ({ selectedCity, onSelectCity }: CitySelectorProps) => {
             <div className="flex items-center gap-2">
               <div className={`w-2.5 h-2.5 rounded-full bg-${level.color}`} />
               <span className="font-semibold">{selectedCity.name}</span>
-              <span className="text-xs text-muted-foreground">{selectedCity.state}</span>
               <span className={`font-mono text-xs font-bold text-${level.color} ml-auto`}>AQI {selectedCity.aqi}</span>
             </div>
           </SelectValue>
