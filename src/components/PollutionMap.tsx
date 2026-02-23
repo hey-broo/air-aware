@@ -16,6 +16,14 @@ const colorMap: Record<string, string> = {
   severe: "hsl(280, 68%, 40%)",
 };
 
+const priorityLabels: Record<string, string> = {
+  safe: "Low Priority",
+  moderate: "Medium Priority",
+  warning: "High Priority",
+  danger: "Critical Priority",
+  severe: "Emergency Priority",
+};
+
 const trendLabels = {
   improving: "↓ Improving",
   stable: "→ Stable",
@@ -58,43 +66,93 @@ const PollutionMap = ({ zones }: PollutionMapProps) => {
     zones.forEach((zone) => {
       const level = getAqiLevel(zone.aqi);
       const color = colorMap[level.color] || colorMap.moderate;
+      const isHighRisk = zone.aqi > 150;
 
-      const isHighRisk = zone.aqi > 200;
-      const circle = L.circleMarker([zone.lat, zone.lng], {
-        radius: isHighRisk ? 22 : 18,
-        color,
-        fillColor: color,
-        fillOpacity: isHighRisk ? 0.6 : 0.45,
-        weight: isHighRisk ? 3 : 2,
-        className: isHighRisk ? "pulse-marker" : "",
-      });
-
-      circle.bindPopup(`
-        <div style="min-width:150px;font-family:sans-serif;">
-          <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${zone.name}</div>
-          <div style="font-family:monospace;font-size:18px;font-weight:700;color:${color};">AQI ${zone.aqi}</div>
-          <div style="font-size:11px;color:${color};margin-bottom:4px;">${level.label}</div>
-          <div style="font-size:11px;color:#888;">Pollutant: ${zone.mainPollutant}</div>
-          <div style="font-size:11px;color:#888;">Trend: ${trendLabels[zone.trend]}</div>
-          <div style="font-size:11px;color:#888;">Reliability: ${zone.reliabilityScore}%</div>
-        </div>
-      `);
-
-      markersRef.current!.addLayer(circle);
+      if (isHighRisk) {
+        // Square markers for high-priority zones
+        const size = zone.aqi > 200 ? 28 : 22;
+        const icon = L.divIcon({
+          className: `priority-square-marker ${zone.aqi > 200 ? 'pulse-marker' : ''}`,
+          html: `<div style="
+            width: ${size}px;
+            height: ${size}px;
+            background: ${color};
+            opacity: 0.75;
+            border: 2px solid ${color};
+            border-radius: 3px;
+            box-shadow: 0 0 10px ${color};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "><span style="color: white; font-size: 9px; font-weight: 700;">${zone.aqi}</span></div>`,
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+        });
+        const marker = L.marker([zone.lat, zone.lng], { icon });
+        marker.bindPopup(`
+          <div style="min-width:150px;font-family:sans-serif;">
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${zone.name}</div>
+            <div style="font-family:monospace;font-size:18px;font-weight:700;color:${color};">AQI ${zone.aqi}</div>
+            <div style="font-size:11px;color:${color};margin-bottom:4px;">⚠ ${priorityLabels[level.color] || 'High Priority'}</div>
+            <div style="font-size:11px;color:#888;">Pollutant: ${zone.mainPollutant}</div>
+            <div style="font-size:11px;color:#888;">Trend: ${trendLabels[zone.trend]}</div>
+            <div style="font-size:11px;color:#888;">Reliability: ${zone.reliabilityScore}%</div>
+          </div>
+        `);
+        markersRef.current!.addLayer(marker);
+      } else {
+        // Circle markers for low-priority zones
+        const circle = L.circleMarker([zone.lat, zone.lng], {
+          radius: 14,
+          color,
+          fillColor: color,
+          fillOpacity: 0.4,
+          weight: 2,
+        });
+        circle.bindPopup(`
+          <div style="min-width:150px;font-family:sans-serif;">
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${zone.name}</div>
+            <div style="font-family:monospace;font-size:18px;font-weight:700;color:${color};">AQI ${zone.aqi}</div>
+            <div style="font-size:11px;color:${color};margin-bottom:4px;">${level.label}</div>
+            <div style="font-size:11px;color:#888;">Pollutant: ${zone.mainPollutant}</div>
+            <div style="font-size:11px;color:#888;">Trend: ${trendLabels[zone.trend]}</div>
+            <div style="font-size:11px;color:#888;">Reliability: ${zone.reliabilityScore}%</div>
+          </div>
+        `);
+        markersRef.current!.addLayer(circle);
+      }
     });
   }, [zones, center]);
 
+  const highPriorityCount = zones.filter(z => z.aqi > 150).length;
+
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">Zone Pollution Map</h3>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-safe" /> Good</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-moderate" /> Moderate</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-warning" /> Unhealthy SG</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-danger" /> Unhealthy</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-severe" /> Very Unhealthy</span>
+      {/* Priority Color Legend */}
+      <div className="glass-card p-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h3 className="text-sm font-semibold text-foreground">Zone Pollution Map</h3>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full" style={{ background: colorMap.safe }} /> Low
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full" style={{ background: colorMap.moderate }} /> Medium
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-sm" style={{ background: colorMap.warning }} /> High ■
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-sm" style={{ background: colorMap.danger }} /> Critical ■
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-sm" style={{ background: colorMap.severe }} /> Emergency ■
+            </span>
+          </div>
         </div>
+        {highPriorityCount > 0 && (
+          <p className="text-xs text-warning mt-1.5">⚠ {highPriorityCount} high-priority zone{highPriorityCount > 1 ? 's' : ''} detected (■ square markers)</p>
+        )}
       </div>
       <div
         ref={containerRef}

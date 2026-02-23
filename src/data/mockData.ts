@@ -40,7 +40,7 @@ export const indianStates = [
   "Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "Uttar Pradesh",
   "Gujarat", "Rajasthan", "West Bengal", "Madhya Pradesh", "Punjab",
   "Telangana", "Bihar", "Kerala", "Assam", "Odisha",
-  "Andhra Pradesh", "Jharkhand", "Chhattisgarh",
+  "Andhra Pradesh", "Jharkhand", "Chhattisgarh", "Karnataka",
 ];
 
 export const cities: City[] = [
@@ -69,6 +69,7 @@ export const cities: City[] = [
   { id: "rch", name: "Ranchi", state: "Jharkhand", aqi: 132, lat: 23.34, lng: 85.31, population: "1.5M" },
   { id: "rpr", name: "Raipur", state: "Chhattisgarh", aqi: 148, lat: 21.25, lng: 81.63, population: "1.2M" },
   { id: "bbn", name: "Bhubaneswar", state: "Odisha", aqi: 105, lat: 20.30, lng: 85.82, population: "1.0M" },
+  { id: "bly", name: "Bellary", state: "Karnataka", aqi: 138, lat: 15.14, lng: 76.92, population: "0.5M" },
 ];
 
 export const getZonesForCity = (cityId: string): ZoneData[] => {

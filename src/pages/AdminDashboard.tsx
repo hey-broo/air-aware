@@ -66,19 +66,17 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        {/* Main: Map/Graph + AI Chat */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            {viewMode === "map" ? (
-              <PollutionMap zones={zones} />
-            ) : (
-              <PollutionGraph data={trendData} cityName={selectedCity.name} />
-            )}
-          </div>
-          <div>
-            <AIChatPanel city={selectedCity} zones={zones} />
-          </div>
+        {/* Main: Map/Graph */}
+        <div>
+          {viewMode === "map" ? (
+            <PollutionMap zones={zones} />
+          ) : (
+            <PollutionGraph data={trendData} cityName={selectedCity.name} />
+          )}
         </div>
+
+        {/* Floating AI Chat */}
+        <AIChatPanel city={selectedCity} zones={zones} mode="admin" />
       </main>
     </div>
   );

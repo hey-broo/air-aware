@@ -126,7 +126,7 @@
   }
 
   html {
-    @apply dark;
+    /* Default to dark; toggled via JS */
   }
 
   body {

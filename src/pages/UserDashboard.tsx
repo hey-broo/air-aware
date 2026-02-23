@@ -6,6 +6,7 @@ import AlertBanner from "@/components/AlertBanner";
 import PollutionMap from "@/components/PollutionMap";
 import PollutionGraph from "@/components/PollutionGraph";
 import WhatIfSimulator from "@/components/WhatIfSimulator";
+import AIChatPanel from "@/components/AIChatPanel";
 import {
   cities, getZonesForCity, getAlertsForCity, getTrendData,
   getAqiLevel, getSimpleAqiLabel, type City,
@@ -100,6 +101,8 @@ const UserDashboard = () => {
             <WhatIfSimulator baseAqi={selectedCity.aqi} />
           </div>
         </div>
+        {/* Floating User Chat */}
+        <AIChatPanel city={selectedCity} zones={zones} mode="user" />
       </main>
     </div>
   );

@@ -1,4 +1,5 @@
-import { Activity, Wind, LogOut, Shield, User } from "lucide-react";
+import { Activity, Wind, LogOut, Shield, User, Moon, Sun } from "lucide-react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,9 +9,17 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
   const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
+  };
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle("dark", next);
   };
 
   const navLinks = user?.role === "admin"
@@ -58,8 +67,12 @@ const Header = () => {
             <span className="text-xs font-medium text-safe">Live</span>
           </div>
 
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleTheme} title="Toggle theme">
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </Button>
+
           {user && (
-            <div className="flex items-center gap-2 ml-2">
+            <div className="flex items-center gap-2 ml-1">
               <span className={`aqi-badge text-[10px] ${user.role === "admin" ? "bg-primary/20 text-primary" : "bg-secondary text-secondary-foreground"}`}>
                 {user.role}
               </span>
