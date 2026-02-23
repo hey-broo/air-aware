@@ -1,6 +1,9 @@
-import { MapPin, ChevronDown } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { cities, indianStates, getAqiLevel, type City } from "@/data/mockData";
 import { useState } from "react";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 
 interface CitySelectorProps {
   selectedCity: City;
@@ -9,7 +12,6 @@ interface CitySelectorProps {
 
 const CitySelector = ({ selectedCity, onSelectCity }: CitySelectorProps) => {
   const [selectedState, setSelectedState] = useState<string>("All");
-  const [open, setOpen] = useState(false);
 
   const filtered = selectedState === "All" ? cities : cities.filter(c => c.state === selectedState);
   const level = getAqiLevel(selectedCity.aqi);
@@ -48,49 +50,40 @@ const CitySelector = ({ selectedCity, onSelectCity }: CitySelectorProps) => {
         ))}
       </div>
 
-      {/* City list */}
-      <div className="relative">
-        <button
-          onClick={() => setOpen(!open)}
-          className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-secondary/50 border border-border hover:border-primary/40 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className={`w-2.5 h-2.5 rounded-full bg-${level.color}`} />
-            <div className="text-left">
-              <span className="text-sm font-semibold text-foreground">{selectedCity.name}</span>
-              <span className="text-xs text-muted-foreground ml-2">{selectedCity.state}</span>
+      {/* City select using Radix */}
+      <Select
+        value={selectedCity.id}
+        onValueChange={(val) => {
+          const city = cities.find(c => c.id === val);
+          if (city) onSelectCity(city);
+        }}
+      >
+        <SelectTrigger className="w-full bg-secondary/50 border-border hover:border-primary/40">
+          <SelectValue>
+            <div className="flex items-center gap-2">
+              <div className={`w-2.5 h-2.5 rounded-full bg-${level.color}`} />
+              <span className="font-semibold">{selectedCity.name}</span>
+              <span className="text-xs text-muted-foreground">{selectedCity.state}</span>
+              <span className={`font-mono text-xs font-bold text-${level.color} ml-auto`}>AQI {selectedCity.aqi}</span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={`font-mono text-sm font-bold text-${level.color}`}>AQI {selectedCity.aqi}</span>
-            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
-          </div>
-        </button>
-
-        {open && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-xl z-10 max-h-48 overflow-y-auto">
-            {filtered.map(city => {
-              const cl = getAqiLevel(city.aqi);
-              return (
-                <button
-                  key={city.id}
-                  onClick={() => { onSelectCity(city); setOpen(false); }}
-                  className={`w-full flex items-center justify-between px-3 py-2 hover:bg-secondary/50 transition-colors ${
-                    city.id === selectedCity.id ? "bg-primary/10" : ""
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full bg-${cl.color}`} />
-                    <span className="text-sm text-foreground">{city.name}</span>
-                    <span className="text-xs text-muted-foreground">{city.state}</span>
-                  </div>
-                  <span className={`font-mono text-xs font-semibold text-${cl.color}`}>{city.aqi}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent className="z-50 bg-popover border-border max-h-60">
+          {filtered.map(city => {
+            const cl = getAqiLevel(city.aqi);
+            return (
+              <SelectItem key={city.id} value={city.id}>
+                <div className="flex items-center gap-2 w-full">
+                  <div className={`w-2 h-2 rounded-full bg-${cl.color}`} />
+                  <span>{city.name}</span>
+                  <span className="text-xs text-muted-foreground">{city.state}</span>
+                  <span className={`font-mono text-xs font-semibold text-${cl.color} ml-auto`}>{city.aqi}</span>
+                </div>
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

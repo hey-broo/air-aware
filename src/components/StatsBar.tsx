@@ -17,7 +17,7 @@ const StatsBar = ({ city }: StatsBarProps) => {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {stats.map(({ icon: Icon, label, value, sub, color }, i) => (
         <div key={label} className="glass-card p-3 animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
           <div className="flex items-center gap-2 mb-2">
