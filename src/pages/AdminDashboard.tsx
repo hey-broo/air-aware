@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Map, BarChart3 } from "lucide-react";
+import { Map, BarChart3, AlertTriangle } from "lucide-react";
 import Header from "@/components/Header";
 import CitySelector from "@/components/CitySelector";
 import StatsBar from "@/components/StatsBar";
@@ -25,6 +25,33 @@ const AdminDashboard = () => {
       <Header />
 
       <main className="container mx-auto px-4 py-6 space-y-6">
+        {/* Critical AQI Banner */}
+        {selectedCity.aqi > 150 && (
+          <div className="relative overflow-hidden rounded-xl border border-destructive/40 bg-destructive/10 p-4 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-destructive/20">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-destructive uppercase tracking-wide">
+                  {selectedCity.aqi > 300 ? "🚨 Emergency Alert" : selectedCity.aqi > 200 ? "⚠️ High Risk Alert" : "⚠️ Elevated AQI Alert"}
+                </h3>
+                <p className="text-sm text-foreground mt-0.5">
+                  <strong>{selectedCity.name}</strong> AQI is at <strong>{selectedCity.aqi}</strong> — 
+                  {selectedCity.aqi > 300
+                    ? " hazardous levels detected. Immediate action required."
+                    : selectedCity.aqi > 200
+                    ? " very unhealthy conditions. Issue public advisory now."
+                    : " unhealthy for sensitive groups. Monitor closely."}
+                </p>
+              </div>
+              <span className="shrink-0 rounded-md bg-destructive/20 px-3 py-1 text-lg font-bold text-destructive">
+                {selectedCity.aqi}
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-2xl font-bold text-foreground">Admin Dashboard</h2>
           <span className="aqi-badge bg-primary/20 text-primary">Admin</span>
