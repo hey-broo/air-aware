@@ -15,6 +15,8 @@ export interface ZoneData {
   trend: "improving" | "stable" | "worsening";
   mainPollutant: string;
   reliabilityScore: number;
+  lat: number;
+  lng: number;
 }
 
 export interface AlertData {
@@ -53,7 +55,10 @@ export const cities: City[] = [
 ];
 
 export const getZonesForCity = (cityId: string): ZoneData[] => {
-  const base = cities.find(c => c.id === cityId)?.aqi || 100;
+  const city = cities.find(c => c.id === cityId);
+  const base = city?.aqi || 100;
+  const baseLat = city?.lat || 20;
+  const baseLng = city?.lng || 77;
   const names: Record<string, string[]> = {
     mum: ["Andheri", "Bandra", "Colaba", "Dadar", "Powai", "Worli", "Malad", "Thane", "Navi Mumbai"],
     del: ["Connaught Place", "Dwarka", "Rohini", "Saket", "Janakpuri", "Karol Bagh", "Lajpat Nagar", "Nehru Place", "Pitampura"],
@@ -64,6 +69,13 @@ export const getZonesForCity = (cityId: string): ZoneData[] => {
   const trends: ZoneData["trend"][] = ["improving", "stable", "worsening"];
   const pollutants = ["PM2.5", "PM10", "NO₂", "SO₂", "O₃", "CO"];
 
+  // Spread zones around the city center
+  const offsets = [
+    [-0.04, -0.04], [-0.04, 0], [-0.04, 0.04],
+    [0, -0.04], [0, 0], [0, 0.04],
+    [0.04, -0.04], [0.04, 0], [0.04, 0.04],
+  ];
+
   return zoneNames.map((name, i) => ({
     id: `${cityId}-z${i}`,
     name,
@@ -71,6 +83,8 @@ export const getZonesForCity = (cityId: string): ZoneData[] => {
     trend: trends[Math.floor(Math.random() * 3)],
     mainPollutant: pollutants[Math.floor(Math.random() * pollutants.length)],
     reliabilityScore: Math.floor(70 + Math.random() * 30),
+    lat: baseLat + (offsets[i]?.[0] || 0),
+    lng: baseLng + (offsets[i]?.[1] || 0),
   }));
 };
 
