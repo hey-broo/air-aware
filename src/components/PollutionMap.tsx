@@ -59,12 +59,14 @@ const PollutionMap = ({ zones }: PollutionMapProps) => {
       const level = getAqiLevel(zone.aqi);
       const color = colorMap[level.color] || colorMap.moderate;
 
+      const isHighRisk = zone.aqi > 200;
       const circle = L.circleMarker([zone.lat, zone.lng], {
-        radius: 18,
+        radius: isHighRisk ? 22 : 18,
         color,
         fillColor: color,
-        fillOpacity: 0.45,
-        weight: 2,
+        fillOpacity: isHighRisk ? 0.6 : 0.45,
+        weight: isHighRisk ? 3 : 2,
+        className: isHighRisk ? "pulse-marker" : "",
       });
 
       circle.bindPopup(`

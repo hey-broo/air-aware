@@ -39,6 +39,8 @@ export interface TrendPoint {
 export const indianStates = [
   "Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "Uttar Pradesh",
   "Gujarat", "Rajasthan", "West Bengal", "Madhya Pradesh", "Punjab",
+  "Telangana", "Bihar", "Kerala", "Assam", "Odisha",
+  "Andhra Pradesh", "Jharkhand", "Chhattisgarh",
 ];
 
 export const cities: City[] = [
@@ -52,6 +54,21 @@ export const cities: City[] = [
   { id: "kol", name: "Kolkata", state: "West Bengal", aqi: 167, lat: 22.57, lng: 88.36, population: "14.8M" },
   { id: "bpl", name: "Bhopal", state: "Madhya Pradesh", aqi: 121, lat: 23.26, lng: 77.41, population: "1.9M" },
   { id: "chd", name: "Chandigarh", state: "Punjab", aqi: 103, lat: 30.73, lng: 76.77, population: "1.1M" },
+  { id: "hyd", name: "Hyderabad", state: "Telangana", aqi: 118, lat: 17.38, lng: 78.49, population: "10.5M" },
+  { id: "pne", name: "Pune", state: "Maharashtra", aqi: 98, lat: 18.52, lng: 73.85, population: "7.4M" },
+  { id: "pat", name: "Patna", state: "Bihar", aqi: 215, lat: 25.61, lng: 85.14, population: "2.5M" },
+  { id: "var", name: "Varanasi", state: "Uttar Pradesh", aqi: 178, lat: 25.32, lng: 83.01, population: "1.5M" },
+  { id: "kch", name: "Kochi", state: "Kerala", aqi: 62, lat: 9.93, lng: 76.26, population: "2.1M" },
+  { id: "guw", name: "Guwahati", state: "Assam", aqi: 95, lat: 26.14, lng: 91.74, population: "1.1M" },
+  { id: "ind", name: "Indore", state: "Madhya Pradesh", aqi: 110, lat: 22.72, lng: 75.86, population: "2.2M" },
+  { id: "nag", name: "Nagpur", state: "Maharashtra", aqi: 126, lat: 21.15, lng: 79.09, population: "2.9M" },
+  { id: "viz", name: "Visakhapatnam", state: "Andhra Pradesh", aqi: 88, lat: 17.69, lng: 83.22, population: "2.0M" },
+  { id: "cbe", name: "Coimbatore", state: "Tamil Nadu", aqi: 72, lat: 11.02, lng: 76.96, population: "1.7M" },
+  { id: "srt", name: "Surat", state: "Gujarat", aqi: 145, lat: 21.17, lng: 72.83, population: "5.6M" },
+  { id: "tvm", name: "Thiruvananthapuram", state: "Kerala", aqi: 55, lat: 8.52, lng: 76.94, population: "1.0M" },
+  { id: "rch", name: "Ranchi", state: "Jharkhand", aqi: 132, lat: 23.34, lng: 85.31, population: "1.5M" },
+  { id: "rpr", name: "Raipur", state: "Chhattisgarh", aqi: 148, lat: 21.25, lng: 81.63, population: "1.2M" },
+  { id: "bbn", name: "Bhubaneswar", state: "Odisha", aqi: 105, lat: 20.30, lng: 85.82, population: "1.0M" },
 ];
 
 export const getZonesForCity = (cityId: string): ZoneData[] => {
@@ -63,13 +80,16 @@ export const getZonesForCity = (cityId: string): ZoneData[] => {
     mum: ["Andheri", "Bandra", "Colaba", "Dadar", "Powai", "Worli", "Malad", "Thane", "Navi Mumbai"],
     del: ["Connaught Place", "Dwarka", "Rohini", "Saket", "Janakpuri", "Karol Bagh", "Lajpat Nagar", "Nehru Place", "Pitampura"],
     blr: ["Koramangala", "Whitefield", "Indiranagar", "HSR Layout", "Jayanagar", "Electronic City", "Marathahalli", "Hebbal", "Yelahanka"],
+    hyd: ["Hitech City", "Gachibowli", "Secunderabad", "Kukatpally", "Banjara Hills", "Ameerpet", "Madhapur", "LB Nagar", "Shamshabad"],
+    pne: ["Koregaon Park", "Hinjawadi", "Kothrud", "Viman Nagar", "Hadapsar", "Shivajinagar", "Baner", "Aundh", "Wakad"],
+    pat: ["Patna Junction", "Boring Road", "Kankarbagh", "Rajendra Nagar", "Bailey Road", "Danapur", "Phulwari Sharif", "Digha", "Ashiana"],
+    kch: ["Fort Kochi", "Ernakulam", "Edappally", "Kakkanad", "Vyttila", "Thripunithura", "Aluva", "Kaloor", "Marine Drive"],
     default: ["Zone A", "Zone B", "Zone C", "Zone D", "Zone E", "Zone F", "Zone G", "Zone H", "Zone I"],
   };
   const zoneNames = names[cityId] || names.default;
   const trends: ZoneData["trend"][] = ["improving", "stable", "worsening"];
   const pollutants = ["PM2.5", "PM10", "NO₂", "SO₂", "O₃", "CO"];
 
-  // Spread zones around the city center
   const offsets = [
     [-0.04, -0.04], [-0.04, 0], [-0.04, 0.04],
     [0, -0.04], [0, 0], [0, 0.04],
@@ -128,4 +148,13 @@ export const getAqiLevel = (aqi: number) => {
   if (aqi <= 200) return { label: "Unhealthy", color: "danger" as const };
   if (aqi <= 300) return { label: "Very Unhealthy", color: "severe" as const };
   return { label: "Hazardous", color: "danger" as const };
+};
+
+export const getSimpleAqiLabel = (aqi: number) => {
+  if (aqi <= 50) return { label: "Good", advice: "Air quality is great! Enjoy outdoor activities.", emoji: "😊" };
+  if (aqi <= 100) return { label: "Fair", advice: "Air is okay. Most people can go outside safely.", emoji: "🙂" };
+  if (aqi <= 150) return { label: "Poor", advice: "Sensitive people should limit outdoor time.", emoji: "😐" };
+  if (aqi <= 200) return { label: "Bad", advice: "Reduce outdoor activities. Wear a mask if needed.", emoji: "😷" };
+  if (aqi <= 300) return { label: "Very Bad", advice: "Stay indoors. Close windows. Use air purifiers.", emoji: "🚫" };
+  return { label: "Dangerous", advice: "Health emergency! Do not go outside.", emoji: "⚠️" };
 };
