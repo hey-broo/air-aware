@@ -29,33 +29,6 @@ const CitySelector = ({ selectedCity, onSelectCity }: CitySelectorProps) => {
         Select Location
       </div>
 
-      {/* State filter */}
-      <div className="flex flex-wrap gap-1.5">
-        <button
-          onClick={() => setSelectedState("All")}
-          className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
-            selectedState === "All"
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-          }`}
-        >
-          All
-        </button>
-        {indianStates.map(state => (
-          <button
-            key={state}
-            onClick={() => setSelectedState(state)}
-            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
-              selectedState === state
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            {state}
-          </button>
-        ))}
-      </div>
-
       {/* City select */}
       <Select
         value={selectedCity.id}
