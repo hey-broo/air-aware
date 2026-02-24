@@ -191,3 +191,13 @@
 .pulse-marker {
   animation: map-pulse 2s ease-in-out infinite;
 }
+
+/* Keep Leaflet map below floating UI elements */
+.leaflet-container {
+  z-index: 1 !important;
+}
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: auto !important;
+}
