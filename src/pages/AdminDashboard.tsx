@@ -7,6 +7,7 @@ import AlertBanner from "@/components/AlertBanner";
 import PollutionMap from "@/components/PollutionMap";
 import PollutionGraph from "@/components/PollutionGraph";
 import AIChatPanel from "@/components/AIChatPanel";
+import RecommendedActions from "@/components/RecommendedActions";
 import {
   cities, getZonesForCity, getAlertsForCity, getTrendData,
   type City,
@@ -68,6 +69,8 @@ const AdminDashboard = () => {
         </div>
 
         <AlertBanner alerts={alerts} />
+
+        <RecommendedActions city={selectedCity} />
 
         {/* View Toggle */}
         <div className="flex items-center gap-2">
