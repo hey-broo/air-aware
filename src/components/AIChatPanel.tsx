@@ -132,7 +132,7 @@ const AIChatPanel = ({ city, zones, mode = "admin" }: AIChatPanelProps) => {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg"
+        className="fixed bottom-6 right-6 z-[9999] h-14 w-14 rounded-full shadow-lg"
         size="icon"
       >
         <MessageCircle className="w-6 h-6" />
@@ -141,7 +141,7 @@ const AIChatPanel = ({ city, zones, mode = "admin" }: AIChatPanelProps) => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[90vw]">
+    <div className="fixed bottom-6 right-6 z-[9999] w-[380px] max-w-[90vw]">
       <div className="flex flex-col h-[500px] shadow-2xl border border-border rounded-xl bg-background/60 backdrop-blur-xl">
         {/* Header with close */}
         <div className="p-3 border-b border-border/50 flex items-center gap-2">
