@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Wind, LogIn } from "lucide-react";
+import { Wind, UserPlus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const Login = () => {
+const SignUp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
   const { login, user } = useAuth();
   const navigate = useNavigate();
@@ -20,11 +21,24 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!username || !password) {
+      setError("All fields are required");
+      return;
+    }
+    if (password.length < 3) {
+      setError("Password must be at least 3 characters");
+      return;
+    }
+    if (password !== confirm) {
+      setError("Passwords do not match");
+      return;
+    }
+    // Demo: use existing login flow
     const success = login(username, password);
     if (success) {
       navigate(username === "admin" ? "/admin" : "/dashboard", { replace: true });
     } else {
-      setError("Invalid username or password");
+      setError("Use demo credentials: admin/123 or user/123");
     }
   };
 
@@ -35,8 +49,8 @@ const Login = () => {
           <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto glow-primary">
             <Wind className="w-7 h-7 text-primary" />
           </div>
-          <h1 className="text-xl font-bold text-foreground">Welcome Back</h1>
-          <p className="text-xs text-muted-foreground">Sign in to your AirAware account</p>
+          <h1 className="text-xl font-bold text-foreground">Create Account</h1>
+          <p className="text-xs text-muted-foreground">Join AirAware for free</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -45,7 +59,7 @@ const Login = () => {
             <Input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
+              placeholder="Choose a username"
               className="bg-secondary/50"
             />
           </div>
@@ -55,7 +69,17 @@ const Login = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
+              placeholder="Create a password"
+              className="bg-secondary/50"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground">Confirm Password</label>
+            <Input
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="Confirm password"
               className="bg-secondary/50"
             />
           </div>
@@ -63,15 +87,15 @@ const Login = () => {
           {error && <p className="text-xs text-destructive font-medium">{error}</p>}
 
           <Button type="submit" className="w-full gap-2">
-            <LogIn className="w-4 h-4" />
-            Sign In
+            <UserPlus className="w-4 h-4" />
+            Create Account
           </Button>
         </form>
 
         <p className="text-center text-xs text-muted-foreground">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-primary hover:underline font-medium">
-            Sign up
+          Already have an account?{" "}
+          <Link to="/login" className="text-primary hover:underline font-medium">
+            Sign in
           </Link>
         </p>
 
@@ -86,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
